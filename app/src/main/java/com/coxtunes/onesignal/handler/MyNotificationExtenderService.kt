@@ -1,34 +1,28 @@
-package com.coxtunes.onesignal.handler;
+package com.coxtunes.onesignal.handler
 
-        import android.graphics.Bitmap;
-        import android.graphics.BitmapFactory;
-        import android.support.v4.app.NotificationCompat;
-        import android.util.Log;
+import android.support.v4.app.NotificationCompat
+import android.util.Log
+import java.math.BigInteger
 
-        import com.onesignal.NotificationExtenderService;
-        import com.onesignal.OSNotificationDisplayedResult;
-        import com.onesignal.OSNotificationReceivedResult;
-
-        import java.math.BigInteger;
-
-public class MyNotificationExtenderService extends NotificationExtenderService {
-    @Override
-    protected boolean onNotificationProcessing(OSNotificationReceivedResult receivedResult) {
-        OverrideSettings overrideSettings = new OverrideSettings();
-        overrideSettings.extender = new NotificationCompat.Extender() {
-            @Override
-            public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
+class MyNotificationExtenderService : NotificationExtenderService() {
+    protected fun onNotificationProcessing(receivedResult: OSNotificationReceivedResult?): Boolean {
+        val overrideSettings = OverrideSettings()
+        overrideSettings.extender = object : Extender() {
+            fun extend(builder: NotificationCompat.Builder): NotificationCompat.Builder {
                 // Sets the background notification color to Red on Android 5.0+ devices.
-                Bitmap icon = BitmapFactory.decodeResource(MyApplication.getContext().getResources(),
-                        R.drawable.ic_stat_onesignal_default);
-                builder.setLargeIcon(icon);
-                return builder.setColor(new BigInteger("FF0000FF", 16).intValue());
+                val icon: Bitmap = BitmapFactory.decodeResource(
+                    MyApplication.getContext().getResources(),
+                    R.drawable.ic_stat_onesignal_default
+                )
+                builder.setLargeIcon(icon)
+                return builder.setColor(BigInteger("FF0000FF", 16).toInt())
             }
-        };
-
-        OSNotificationDisplayedResult displayedResult = displayNotification(overrideSettings);
-        Log.d("OneSignalExample", "Notification displayed with id: " + displayedResult.androidNotificationId);
-
-        return true;
+        }
+        val displayedResult: OSNotificationDisplayedResult = displayNotification(overrideSettings)
+        Log.d(
+            "OneSignalExample",
+            "Notification displayed with id: " + displayedResult.androidNotificationId
+        )
+        return true
     }
 }
